@@ -2,7 +2,6 @@
 
 #include "common/vec.h"
 
-#define COLOR_USE_PP2FILE
 #include "color.hpp"
 
 #include <experimental/filesystem>
