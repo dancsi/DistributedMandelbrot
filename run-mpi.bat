@@ -1,0 +1,2 @@
+echo %~dp0\msvc\Debug\mandelbrot.exe
+mpiexec -n 1 "%~dp0\msvc\Release\mandelbrot.exe" --processor=server --jobspec="%~dp0\jobspec.json" --outfile="out.ppm" : -n 2 "%~dp0\msvc\Release\mandelbrot.exe" --processor=worker-st

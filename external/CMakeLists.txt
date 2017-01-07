@@ -1,0 +1,6 @@
+add_subdirectory(color)
+add_subdirectory(concurrentqueue)
+add_subdirectory(flags)
+add_subdirectory(gsl)
+add_subdirectory(json)
+add_subdirectory(spdlog)
