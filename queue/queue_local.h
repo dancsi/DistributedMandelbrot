@@ -2,10 +2,10 @@
 
 #include "queue_base.h"
 
+#include "common/experimental_cxx_features.h"
 #include "result_collector.h"
 
 #include <queue>
-#include <string_view>
 
 struct QueueLocal : Queue {
 	std::queue<Job> storage;

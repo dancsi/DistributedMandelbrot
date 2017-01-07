@@ -1,14 +1,13 @@
 #pragma once
 
-#include <filesystem>
 #include <fstream>
 #include <ostream>
 #include <string>
-#include <string_view>
 #include <vector>
 
 #include <gsl/gsl>
 
+#include "experimental_cxx_features.h"
 #include "logging.h"
 #include "vec.h"
 
@@ -27,7 +26,7 @@ struct Job {
 		if (!fs::exists(path)) {
 			logging::log_and_throw("The requested file {} does not exist", path.string());
 		}
-		std::ifstream fin(path);
+		std::ifstream fin(path.string());
 		json config;
 		fin >> config;
 		pos = { config["pos"][0], config["pos"][1] };
@@ -89,7 +88,7 @@ struct Job {
 		return { reinterpret_cast<char*>(this), sz };
 	}
 
-	Job(gsl::span<char>& bytes) {
+	Job(gsl::span<char> bytes) {
 		memcpy(reinterpret_cast<void*>(this), bytes.data(), bytes.size_bytes());
 	}
 };

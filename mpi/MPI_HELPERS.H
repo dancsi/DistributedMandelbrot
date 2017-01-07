@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 #include <gsl/gsl>
 #include <mpi.h>
 
@@ -45,7 +47,7 @@ namespace MPI {
 		struct TypeLookupImpl<T, false> : TypeLookupSpan<T> {};
 
 		template<typename T>
-		struct TypeLookupCVRRemoved : TypeLookupImpl<T, is_scalar_v<T>> {};
+		struct TypeLookupCVRRemoved : TypeLookupImpl<T, is_scalar<T>::value> {};
 
 		template<typename T>
 		struct TypeLookup : TypeLookupCVRRemoved<remove_reference_t<T>> {};
@@ -56,7 +58,7 @@ namespace MPI {
 		template <typename T>
 		struct BufferWrapper;
 
-#define ENABLE_IF_T_SCALAR template <typename T, typename = enable_if_t<is_scalar_v<T>, T> >
+#define ENABLE_IF_T_SCALAR template <typename T, typename = enable_if_t<is_scalar<T>::value, T> >
 
 		ENABLE_IF_T_SCALAR
 		constexpr int buffer_length(T& v) {
@@ -92,7 +94,7 @@ namespace MPI {
 
 	template<typename T>
 	int Recv(T&& v, MPI_Comm comm) {
-		return Recv(forward<T>(v), MPI_ANY_SOURCE, MPI_ANY_TAG, comm, MPI_STATUS_IGNORE);
+		return Recv(std::forward<T>(v), MPI_ANY_SOURCE, MPI_ANY_TAG, comm, MPI_STATUS_IGNORE);
 	}
 
 	template<typename T>

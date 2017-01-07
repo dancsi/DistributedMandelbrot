@@ -5,6 +5,7 @@
 #include "color.hpp"
 
 #include <experimental/filesystem>
+#include <ios>
 
 #define M_PI 3.1415926535897932384626433832795f
 
@@ -107,7 +108,7 @@ struct ResultCollector {
 
 		normalize();
 
-		std::ofstream fout(path.c_str(), std::ios::binary);
+		std::ofstream fout(path.string(), std::ios::binary);
 
 		fout << "P6\n";
 		fout << size.x << " " << size.y << "\n";

@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
 	bool is_standalone = args.get<bool>("standalone", false);
 	auto processor_type = args.get<string>("processor");
 
-	if (!processor_type.has_value()) {
+	if (!processor_type) {
 		console->error("You must specify the processor type");
 		exit(1);
 	}

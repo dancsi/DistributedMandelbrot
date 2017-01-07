@@ -6,6 +6,7 @@
 #include "kernel/kernel.h"
 
 #include <thread>
+#include <condition_variable>
 #include <vector>
 
 struct WorkerMT : Processor {

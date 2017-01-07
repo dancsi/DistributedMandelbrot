@@ -27,7 +27,7 @@ vec2<T> operator-(const vec2<T> v, const scalar x) {
 	return { v.x - x, v.y - x };
 }
 
-template<typename scalar, typename T, typename = std::enable_if_t<std::is_arithmetic_v<scalar>, T>>
+template<typename scalar, typename T>
 vec2<T> operator/(const vec2<T> v, const scalar x) {
 	return { v.x / x, v.y / x };
 }
@@ -42,11 +42,7 @@ vec2<std::common_type_t<T1, T2>> operator*(const vec2<T1> a, const vec2<T2> b) {
 	return { a.x * b.x,a.y * b.y };
 }
 
-template<typename T1, 
-	typename T2, 
-	typename = std::enable_if_t<std::is_integral_v<T1>, T1>, 
-	typename = std::enable_if_t<std::is_integral_v<T2>, T2>
->
+template<typename T1, typename T2>
 vec2<std::common_type_t<T1, T2>> operator%(const vec2<T1> a, const vec2<T2> b) {
 	return { a.x % b.x,a.y % b.y };
 }

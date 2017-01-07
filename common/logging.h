@@ -1,18 +1,20 @@
 #pragma once
 
-#include <string_view>
 #include <utility>
+
+#include "experimental_cxx_features.h"
 
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"
 
 namespace logging {
-	using console_logger_t = typename decltype(spdlog::stdout_logger_mt("console"));
+	using console_logger_t = std::shared_ptr<spdlog::logger>;
 	extern console_logger_t console;
 
 	void setup(console_logger_t& console) {
 		namespace spd = spdlog;
-		console.swap(spd::stdout_logger_mt("console"));
+		auto&& real_console = spd::stdout_logger_mt("console");
+		console.swap(real_console);
 		console->set_pattern("[%T] [?] [%l] %v");
 		console->flush_on(spdlog::level::trace);
 		console->set_level(spdlog::level::trace);

@@ -2,7 +2,8 @@
 
 #include "queue_base.h"
 
-#include <optional>
+#include "common/experimental_cxx_features.h"
+
 #include <queue>
 
 struct QueueMPI : Queue {
@@ -48,7 +49,7 @@ struct QueueMPI : Queue {
 	void fill_buffer() {
 		while (!remote_queue_empty && buffer.size() < buffer_size) {
 			auto&& job = pull_single();
-			if (job.has_value())
+			if (job)
 				buffer.push(*job);
 			else
 				break;
