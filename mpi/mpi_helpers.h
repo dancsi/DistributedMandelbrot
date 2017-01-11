@@ -12,24 +12,26 @@ namespace MPI {
 	using logging::console;
 	
 	namespace detail {
+		constexpr MPI_Datatype type_array[] = {MPI_INT, MPI_UINT32_T, MPI_FLOAT, MPI_DOUBLE, MPI_BYTE};
+
 		using namespace std;
 		template <typename T>
 		struct TypeLookupBasic{};
 
 		template<>
-		struct TypeLookupBasic<int> : integral_constant<int, MPI_INT> {};
+		struct TypeLookupBasic<int> : integral_constant<int, 0> {};
 		template<>
-		struct TypeLookupBasic<uint32_t> : integral_constant<int, MPI_UINT32_T> {};
+		struct TypeLookupBasic<uint32_t> : integral_constant<int, 1> {};
 		template<>
-		struct TypeLookupBasic<double> : integral_constant<int, MPI_DOUBLE> {};
+		struct TypeLookupBasic<float> : integral_constant<int, 2> {};
 		template<>
-		struct TypeLookupBasic<float> : integral_constant<int, MPI_FLOAT> {};
+		struct TypeLookupBasic<double> : integral_constant<int, 3> {};
 		template<>
-		struct TypeLookupBasic<char> : integral_constant<int, MPI_BYTE> {};
+		struct TypeLookupBasic<char> : integral_constant<int, 4> {};
 		template<>
-		struct TypeLookupBasic<unsigned char> : integral_constant<int, MPI_BYTE> {};
+		struct TypeLookupBasic<unsigned char> : integral_constant<int, 4> {};
 		template<>
-		struct TypeLookupBasic<void*> : integral_constant<int, MPI_BYTE> {};
+		struct TypeLookupBasic<void*> : integral_constant<int, 4> {};
 
 		template<typename T>
 		struct TypeLookupScalar : TypeLookupBasic<remove_cv_t<T>> {};
@@ -53,7 +55,7 @@ namespace MPI {
 		struct TypeLookup : TypeLookupCVRRemoved<remove_reference_t<T>> {};
 
 		template <typename T> 
-		constexpr int TypeLookup_v = TypeLookup<T>::value;
+		constexpr MPI_Datatype TypeLookup_v = type_array[TypeLookup<T>::value];
 
 		template <typename T>
 		struct BufferWrapper;
@@ -108,7 +110,7 @@ namespace MPI {
 
 	struct Context {
 		int rank, world_size;
-		int comm;
+		MPI_Comm comm;
 
 		Context(int *argc, char*** argv) {
 			console->trace("Initializing MPI");
