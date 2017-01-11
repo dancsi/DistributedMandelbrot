@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 
 	if (is_standalone) {
 		string jobspec = args.get<string>("jobspec", "jobspec.json");
-		string outfile = args.get<string>("outfile", "out.png");
+		string outfile = args.get<string>("outfile", "out.ppm");
 
 		queue = new QueueLocal(jobspec, outfile);
 	}

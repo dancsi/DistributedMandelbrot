@@ -7,5 +7,6 @@ set(SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/result_collector.h)
 
 target_sources(queue INTERFACE ${SOURCES})
+target_compile_definitions(queue INTERFACE _USE_MATH_DEFINES)
 
 #target_include_directories(common INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")

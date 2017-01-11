@@ -7,8 +7,6 @@
 #include <experimental/filesystem>
 #include <ios>
 
-#define M_PI 3.1415926535897932384626433832795f
-
 namespace fs = std::experimental::filesystem;
 
 struct ResultCollector {

@@ -34,15 +34,21 @@ add_subdirectory(mpi/)
 add_subdirectory(queue/)
 add_subdirectory(processor/)
 
-set(EXTERNAL_LIBRARIES ${MPI_LIBRARIES} common color kernel processor queue flags json)
+set(EXTERNAL_LIBRARIES ${MPI_LIBRARIES} common color kernel mpi_helpers processor queue flags json)
 if(CMAKE_COMPILER_IS_GNUCXX OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang"))
 	set(EXTERNAL_LIBRARIES "stdc++fs ${EXTERNAL_LIBRARIES}")
+endif()
+
+set(PLATFORM_LINK_LIBRARIES "")
+
+if(UNIX)
+	set(PLATFORM_LINK_LIBRARIES "${PLATFORM_LINK_LIBRARIES} pthread")
 endif()
 
 set(SOURCE_FILES main.cpp)
 add_executable(mandelbrot ${SOURCE_FILES})
 
-target_link_libraries(mandelbrot ${EXTERNAL_LIBRARIES})
+target_link_libraries(mandelbrot ${EXTERNAL_LIBRARIES} ${PLATFORM_LINK_LIBRARIES})
 
 set_target_properties(mandelbrot PROPERTIES COMPILE_FLAGS "${MPI_COMPILE_FLAGS}")
 set_target_properties(mandelbrot PROPERTIES LINK_FLAGS "${MPI_LINK_FLAGS}")

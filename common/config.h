@@ -1,10 +1,10 @@
-/* #undef HAVE_optional */
-#define HAVE_EXPERIMENTAL_optional
+#define HAVE_optional
+/* #undef HAVE_EXPERIMENTAL_optional */
 
-/* #undef HAVE_string_view */
-#define HAVE_EXPERIMENTAL_string_view
+#define HAVE_string_view
+/* #undef HAVE_EXPERIMENTAL_string_view */
 
-/* #undef HAVE_filesystem */
+#define HAVE_filesystem
 #define HAVE_EXPERIMENTAL_filesystem
 
-#define HAVE_EXPERIMENTAL_array
+/* #undef HAVE_EXPERIMENTAL_array */
