@@ -80,7 +80,7 @@ struct ResultCollector {
 
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < m; j++) {
-				data[si + i][sj + j] = result[j][i];
+				data[si + i][sj + j] = result[i][j];
 			}
 		}
 	}

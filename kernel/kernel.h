@@ -14,7 +14,7 @@ struct Kernel {
 
 		for (int i = 0; i < job.viewport_size_px.y; i++) {
 			for (int j = 0; j < job.viewport_size_px.x; j++) {
-				vec2d pos = job.pos + vec2i{ i, j } *(job.viewport_size / job.viewport_size_px);
+				vec2d pos = job.pos + vec2i{ j, i } *(job.viewport_size / job.viewport_size_px);
 				ret[i][j] = calc(pos);
 			}
 		}
