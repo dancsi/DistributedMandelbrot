@@ -133,7 +133,7 @@ def scale_around_point(zoom_factor, x, y):
     return translate(x, y) @ scale(zoom_factor) @ translate(-x, -y)
 
 
-def render(pos, viewport_size, viewport_size_px):
+def render(pos, viewport_size, viewport_size_px, outfile="temp.ppm"):
     global img, texture
     json_ = "\n".join(
         [
@@ -147,8 +147,8 @@ def render(pos, viewport_size, viewport_size_px):
     with open("temp.json", "w") as fout:
         fout.write(json_)
     subprocess.run(["../msvc/Release/mandelbrot.exe", "--jobspec=temp.json", "--standalone", "--processor=worker-mt",
-                    "--outfile=temp.ppm"], check=True)
-    img = pyglet.image.load("temp.ppm")
+                    "--outfile={}".format(outfile)], check=True)
+    img = pyglet.image.load(outfile)
     texture = img.get_texture()
 
 
@@ -174,11 +174,13 @@ def render_new():
     screen_to_mandelbrot_identity = screen_to_mandelbrot.copy()
 
 
+img = None
+texture = None
+
 pos = np.r_[-2.5, -1.5]
 viewport = np.r_[4, 3]
 
-img = pyglet.image.load("init.ppm")
-texture = img.get_texture()
+render(pos, viewport, window_size)
 
 screen_to_mandelbrot = translate(*pos) @ np.diag(np.r_[viewport / window_size, 1])
 mandelbrot_to_img = np.diag([img.width / viewport[0], img.height / viewport[1], 1]) @ translate(*(-pos))
