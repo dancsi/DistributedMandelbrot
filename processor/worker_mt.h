@@ -27,18 +27,22 @@ struct WorkerMT : Processor {
 		queue_slave_master.enqueue(std::move(res));
 	}
 
-	void worker_func() {
+	void worker_func(int id) {
 		n_idle_workers++;
+		int job_counter = 0;
 		Job job = Job::dummy();
 		while (!everything_done) {
 			cv_worker_ready.notify_one();
 			while (queue_master_slave.try_dequeue(job)) {
+				job_counter++;
 				n_idle_workers--;
 				process(job);
 				n_idle_workers++;
 			}
 			std::this_thread::yield();
+			//problem: sta ako se ovde pushuje u queue poslednji job, i onda postavi flag na 
 		}
+		logging::console->info("Worker {} shutting down, completed {} jobs", id, job_counter);
 	}
 
 	void process_queue() override {
@@ -48,7 +52,7 @@ struct WorkerMT : Processor {
 		everything_done = false;
 		n_idle_workers.store(0);
 		for (int i = 0; i < n_threads; i++) {
-			std::thread worker(&WorkerMT::worker_func, this);
+			std::thread worker(&WorkerMT::worker_func, this, i);
 			threads.push_back(std::move(worker));
 		}
 
@@ -68,11 +72,6 @@ struct WorkerMT : Processor {
 			}
 			//valjalo bi ovde obavestiti workere da mogu da rade
 		}
-		everything_done = true;
-
-		for (auto&& worker : threads) {
-			worker.join();
-		}
 
 		int jobs_transferred = 0;
 		while (jobs_transferred < jobs_fetched) {
@@ -81,6 +80,13 @@ struct WorkerMT : Processor {
 				results.push_back(std::move(result));
 				jobs_transferred++;
 			}
+			std::this_thread::yield();
+		}
+
+		everything_done = true;
+
+		for (auto&& worker : threads) {
+			worker.join();
 		}
 	}
 
