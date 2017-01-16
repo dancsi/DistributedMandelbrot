@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cstdlib>
 #include <iostream>
 #include <mpi.h>
@@ -70,8 +71,13 @@ int main(int argc, char** argv) {
 		exit(1);
 	}
 
+	auto start_time = chrono::high_resolution_clock::now();
+
 	processor->process_queue();
 	processor->finalize();
+
+	auto duration = chrono::high_resolution_clock::now() - start_time;
+	console->info("Time used for calculation: {} seconds", std::chrono::duration_cast<chrono::seconds>(duration).count());
 
 	delete processor;
 

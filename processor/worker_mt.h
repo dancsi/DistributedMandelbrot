@@ -40,7 +40,6 @@ struct WorkerMT : Processor {
 				n_idle_workers++;
 			}
 			std::this_thread::yield();
-			//problem: sta ako se ovde pushuje u queue poslednji job, i onda postavi flag na 
 		}
 		logging::console->info("Worker {} shutting down, completed {} jobs", id, job_counter);
 	}
