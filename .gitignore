@@ -2,3 +2,9 @@ msvc/
 build/
 out.ppm
 .idea
+
+*.aux
+*.log
+*.out
+*.synctex.gz
+_minted-*/
