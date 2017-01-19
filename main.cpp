@@ -64,7 +64,8 @@ int main(int argc, char** argv) {
 		processor = new WorkerST(queue);
 	}
 	else if (*processor_type == "worker-mt") {
-		processor = new WorkerMT(queue);
+		int n_threads = args.get<int>("num_threads", std::thread::hardware_concurrency());
+		processor = new WorkerMT(queue, n_threads);
 	}
 	else {
 		console->error("The processor must be one of: server, worker-st, worker-mt");

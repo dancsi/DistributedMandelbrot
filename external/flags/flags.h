@@ -125,7 +125,7 @@ template <class T>
 optional<T> get(const argument_map& options, const string_view& option) {
   if (const auto view = get_value(options, option)) {
     T value;
-    if (std::istringstream(view->to_string()) >> value) return value;
+    if (std::istringstream(view->data()) >> value) return value;
   }
   return nullopt;
 }

@@ -12,8 +12,9 @@
 struct WorkerMT : Processor {
 	Kernel kernel;
 	std::vector<JobResult> results;
+	int n_threads;
 
-	WorkerMT(Queue *queue) : Processor(queue), kernel(1000) {}
+	WorkerMT(Queue *queue, int n_threads) : Processor(queue), kernel(1000), n_threads(n_threads) {}
 
 	moodycamel::ConcurrentQueue<Job> queue_master_slave;
 	moodycamel::ConcurrentQueue<JobResult> queue_slave_master;
@@ -45,7 +46,6 @@ struct WorkerMT : Processor {
 	}
 
 	void process_queue() override {
-		int n_threads = std::thread::hardware_concurrency();
 		std::vector<std::thread> threads;
 
 		everything_done = false;
