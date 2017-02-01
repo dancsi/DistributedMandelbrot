@@ -5,13 +5,18 @@ from os import makedirs
 import numpy as np
 import pandas as pd
 import argparse
+from os.path import normpath
 
 nodes = ["localhost"]
-executable_path = "build/mandelbrot"
+executable_path = normpath("build/mandelbrot")
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--display_stdout", help="Displays stdout from the processes being run")
+parser.add_argument(
+    "--display-stdout",
+    help="Displays stdout from the processes being run",
+    action='store_true')
 args = parser.parse_args()
+
 
 def generate_hostfile(num_nodes, num_processes_per_node):
     with open("hosts.txt", "w") as fout:
@@ -27,14 +32,19 @@ def get_cmdline_mpi(
     generate_hostfile(num_nodes, num_processes_per_node)
 
     cmdline_mpi = ["mpiexec",
-                   "-np 1",
-                   "--host localhost",
+                   "-np",
+                   "1",
+                   "--host",
+                   "localhost",
                    executable_path,
                    "--processor=server",
                    ":",
-                   "--hostfile hosts.txt",
-                   "-np {}".format(num_nodes * num_processes_per_node),
-                   "--bynode",
+                   "--hostfile",
+                   "hosts.txt",
+                   "-np",
+                   str(num_nodes * num_processes_per_node),
+                   "--map-by",
+                   "node",
                    executable_path,
                    "--processor={}".format("worker-st" if num_threads_per_process == 1 else "worker-mt"),
                    "--num_threads={}".format(num_threads_per_process)]
@@ -63,7 +73,9 @@ def measure_once(
     display_stdout = args.display_stdout
 
     start = perf_counter()
-    subprocess.run(cmdline, stdout=None if args.display_stdout else subprocess.DEVNULL)
+    subprocess.run(
+        cmdline,
+        stdout=None if args.display_stdout else subprocess.DEVNULL)
     end = perf_counter()
     return end - start
 
