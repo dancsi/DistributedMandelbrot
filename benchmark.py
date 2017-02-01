@@ -18,7 +18,9 @@ if not exists(real_hostfile):
 else:
 	with open(real_hostfile) as fin:
 		for line in fin:
-			nodes.append(line.strip())
+			line = line.strip()
+			if line!='':
+				nodes.append(line)
 
 makedirs("logs", exist_ok=True)
 
