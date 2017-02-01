@@ -86,7 +86,10 @@ def measure_once(
         cmdline,
         stdout=None if args.display_stdout else subprocess.DEVNULL)
     end = perf_counter()
-    return end - start
+
+    elapsed = end - start
+    print("Elapsed: {:0.4f}s".format(elapsed))
+    return elapsed
 
 
 def measure_many(
