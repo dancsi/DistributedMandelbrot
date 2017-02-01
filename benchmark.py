@@ -20,20 +20,30 @@ def get_cmdline_mpi(
         num_nodes,
         num_processes_per_node,
         num_threads_per_process):
-    cmdline_mpi = "mpirun -np 1 --host localhost {0} --processor=server : --hostfile=hosts.txt -np {{total_processes}} --bynode {0} --processor={{processor}} --num_threads={{num_threads}}".format(
-        executable_path)
+
     generate_hostfile(num_nodes, num_processes_per_node)
-    return cmdline_mpi.format(
-        total_processes=num_nodes * num_processes_per_node,
-        num_threads=num_threads_per_process,
-        processor="worker-st" if num_threads_per_process == 1 else "worker-mt")
+
+    cmdline_mpi = ["mpirun",
+                   "-np 1",
+                   "--host localhost",
+                   executable_path,
+                   "--processor=server",
+                   ":",
+                   "--hostfile=hosts.txt",
+                   "-np {}".format(num_nodes * num_processes_per_node),
+                   "--bynode",
+                   executable_path,
+                   "--processor={}".format("worker-st" if num_threads_per_process == 1 else "worker-mt"),
+                   "--num_threads={}".format(num_threads_per_process)]
+
+    return cmdline_mpi
 
 
 def get_cmdline_basic(
         num_nodes,
         num_processes_per_node,
         num_threads_per_process):
-    return executable_path + " --standalone=true --processor=worker-st"
+    return [executable_path, "--standalone=true", "--processor=worker-st"]
 
 
 def measure_once(
