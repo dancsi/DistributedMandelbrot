@@ -1,7 +1,7 @@
 import subprocess
 from time import perf_counter
 from datetime import datetime
-from os import mkdir
+from os import makedirs
 import numpy as np
 import pandas as pd
 
@@ -23,7 +23,7 @@ def get_cmdline_mpi(
 
     generate_hostfile(num_nodes, num_processes_per_node)
 
-    cmdline_mpi = ["mpirun",
+    cmdline_mpi = ["mpiexec",
                    "-np 1",
                    "--host localhost",
                    executable_path,
@@ -59,7 +59,6 @@ def measure_once(
     print("Running cmdline\n", cmdline)
     subprocess.run(cmdline)
     end = perf_counter()
-    input("Continue?")
     return end - start
 
 
@@ -112,5 +111,5 @@ for num_nodes in range(1, max_num_nodes + 1):
                                       'time': t,
                                       'sd': sd}, ignore_index=True)
 
-mkdir("logs")
+makedirs("logs", exist_ok=True)
 results.to_csv("logs/{}.csv".format(int(datetime.now().timestamp())))
