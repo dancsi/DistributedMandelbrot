@@ -4,11 +4,14 @@ from datetime import datetime
 from os import makedirs
 import numpy as np
 import pandas as pd
+import argparse
 
 nodes = ["localhost"]
-
 executable_path = "build/mandelbrot"
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--display_stdout", help="Displays stdout from the processes being run")
+args = parser.parse_args()
 
 def generate_hostfile(num_nodes, num_processes_per_node):
     with open("hosts.txt", "w") as fout:
@@ -29,7 +32,7 @@ def get_cmdline_mpi(
                    executable_path,
                    "--processor=server",
                    ":",
-                   "--hostfile=hosts.txt",
+                   "--hostfile hosts.txt",
                    "-np {}".format(num_nodes * num_processes_per_node),
                    "--bynode",
                    executable_path,
@@ -55,9 +58,12 @@ def measure_once(
         num_nodes,
         num_processes_per_node,
         num_threads_per_process)
-    start = perf_counter()
+
     print("Running cmdline\n", cmdline)
-    subprocess.run(cmdline)
+    display_stdout = args.display_stdout
+
+    start = perf_counter()
+    subprocess.run(cmdline, stdout=None if args.display_stdout else subprocess.DEVNULL)
     end = perf_counter()
     return end - start
 
