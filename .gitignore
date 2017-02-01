@@ -2,6 +2,8 @@ msvc/
 build/
 out.ppm
 .idea
+logs/
+temp_hosts.txt
 
 *.aux
 *.log

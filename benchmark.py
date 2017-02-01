@@ -10,6 +10,7 @@ from os.path import normpath, exists
 executable_path = normpath("build/mandelbrot")
 temp_hostfile_name = "temp-hosts.txt"
 real_hostfile = "hosts.txt"
+csv_name = "logs/{}.csv".format(int(datetime.now().timestamp()))
 
 nodes = []
 if not exists(real_hostfile):
@@ -18,6 +19,8 @@ else:
 	with open(real_hostfile) as fin:
 		for line in fin:
 			nodes.append(line.strip())
+
+makedirs("logs", exist_ok=True)
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -140,8 +143,6 @@ for num_nodes in range(1, max_num_nodes + 1):
                                       'mt': 1,
                                       'time': t,
                                       'sd': sd}, ignore_index=True)
-
-makedirs("logs", exist_ok=True)
-results.to_csv("logs/{}.csv".format(int(datetime.now().timestamp())))
+            results.to_csv(csv_name)
 
 remove(temp_hostfile_name)
