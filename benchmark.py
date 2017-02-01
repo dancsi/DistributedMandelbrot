@@ -1,14 +1,23 @@
 import subprocess
 from time import perf_counter
 from datetime import datetime
-from os import makedirs
+from os import makedirs, remove
 import numpy as np
 import pandas as pd
 import argparse
-from os.path import normpath
+from os.path import normpath, exists
 
-nodes = ["localhost"]
 executable_path = normpath("build/mandelbrot")
+temp_hostfile_name = "temp-hosts.txt"
+real_hostfile = "hosts.txt"
+
+nodes = []
+if not exists(real_hostfile):
+	nodes = ["localhost"]
+else:
+	with open(real_hostfile) as fin:
+		for line in fin:
+			nodes.append(line.strip())
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -19,7 +28,7 @@ args = parser.parse_args()
 
 
 def generate_hostfile(num_nodes, num_processes_per_node):
-    with open("hosts.txt", "w") as fout:
+    with open(temp_hostfile_name, "w") as fout:
         for node in nodes[:num_nodes]:
             print(node, "slots={}".format(num_processes_per_node), file=fout)
 
@@ -40,7 +49,7 @@ def get_cmdline_mpi(
                    "--processor=server",
                    ":",
                    "--hostfile",
-                   "hosts.txt",
+                   temp_hostfile_name,
                    "-np",
                    str(num_nodes * num_processes_per_node),
                    "--map-by",
@@ -131,3 +140,5 @@ for num_nodes in range(1, max_num_nodes + 1):
 
 makedirs("logs", exist_ok=True)
 results.to_csv("logs/{}.csv".format(int(datetime.now().timestamp())))
+
+remove(temp_hostfile_name)
