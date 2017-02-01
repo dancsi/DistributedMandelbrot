@@ -5,7 +5,7 @@ from os import mkdir
 import numpy as np
 import pandas as pd
 
-nodes = ["node1", "node2", "node3", "node4"]
+nodes = ["localhost"]
 
 executable_path = "build/mandelbrot"
 
@@ -47,8 +47,9 @@ def measure_once(
         num_threads_per_process)
     start = perf_counter()
     print("Running cmdline\n", cmdline)
-    subprocess.run([executable_path, ""])
+    subprocess.run(cmdline)
     end = perf_counter()
+    input("Continue?")
     return end - start
 
 
