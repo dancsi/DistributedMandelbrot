@@ -199,16 +199,45 @@ struct Processor {
 	\section{Technical remarks}
 	The program was implemented in C++, using a few helper libraries. As an academic exercise, some parts of the program depend on features from the draft C++17 standard, however they are mostly syntactical sugar, by their nature. Moreover, the program is designed to be as portable as possible, and can be run on both Windows and Linux, provided that they have a recent-enough C++ compiler. Most of the program configuration (including the job specification) is loaded from a JSON file, and the output is written to a Portable PixMap (PPM) image, since it is the simplest image format which is supported by mainstream image viewers.
 	
-	A technically interesting part of the implementation was implementing a modern object-oriented and templated wrapper for the C-language MPI bindings. Using template metaprogramming, one is able to send and receive arbitrary datatypes using generic \texttt{Send} and \emph{Recv} functions. This eliminates the tedium of manually explaining the data structure layout to MPI.
+	A technically interesting part of the implementation was implementing a modern object-oriented and templated wrapper for the C-language MPI bindings. Using template metaprogramming, one is able to send and receive arbitrary datatypes using generic \texttt{Send} and \texttt{Recv} functions. This eliminates the tedium of manually explaining the data structure layout to MPI.
 	
 	Furthermore, the design of the program was decoupled as much as possible, so aside from the aforementioned Processor and Queue abstractions, other components such as the escape-time algorithm and the MPI bindings are all replaceable, as long as they implement the same interface. For example, one could replace the escape-time algorithm with a completely different iterating function, or modify the MPI bindings to use a more robust serialization method.
 	
 	Finally, a thin interactive OpenGL GUI layer is implemented in Python, as well. It supports panning and zooming around the set, with live recalculation when the zoom-level exceeds 1, that is, when the GPU would need to upsample the image beyond its natural resolution. In order to be as portable as possible, no advanced inter-process communication is performed, instead, the worker program is invoked using Python's standardized subprocess library. As an optimization, the image is always rendered with a buffer area around the current screen viewport, so that the user can pan around without triggering a recalculation.
 	
 	\section{Results}
+	The program was evaluated on a 4-node cluster, where each node has two 4-core Intel Xeon E5345 processors. The parameters that were varied were the number of nodes (1 to 4), number of processes per node (1 to 8), and the number of threads per process (1 to 8). For each triple of parameters, the measurement was performed 5 times, and the average of those measurements is taken as the result. This is a reasonable choice, since the standard deviations were relatively small (50 - 100ms) compared to the total runtimes (6 - 140s). The results are displayed as speedups over the baseline, which is taken to be the runtime of a single-threaded program on a single processor. On figures \ref{fig: 1 node speedup} to \ref{fig: 4 node speedup}, we can see the speedups for various numbers of nodes used in the computation.  
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.8\linewidth]{1node.png}
+		\caption{Speedup with 1 node}
+		\label{fig: 1 node speedup}
+	\end{figure}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.8\linewidth]{2node.png}
+		\caption{Speedup with 2 nodes}
+		\label{fig: 2 node speedup}
+	\end{figure}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.8\linewidth]{3node.png}
+		\caption{Speedup with 3 nodes}
+		\label{fig: 3 node speedup}
+	\end{figure}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.8\linewidth]{4node.png}
+		\caption{Speedup with 4 nodes}
+		\label{fig: 4 node speedup}
+	\end{figure}
 	
 	\section{Conclusion}
-	As can be seen from the results, the presented algorithm is efficiently scalable up to...
+	As can be seen from the results, the presented algorithm works the best when there is only 1 process per node, that uses all hardware threads that are available, by itself. Since the problem is computationally-bound, we see that there is no benefit of using more cores then there are available on a node, and we can see from figure \ref{fig: 4 node speedup} that core oversubscription can result in up to 50\% performance degradation. We can also see that we get diminishing returns from increasing the number of nodes. This is most likely due to Amdahl's law, and can be remedied by reducing the communication overhead between nodes -- e.g. by increasing the MPI Virtual Queue buffer size.
 	
 	To sum up, the presented method is appropriate for rendering the Mandelbrot set at very high resolutions. Using the best practices from software engineering, a simple framework was developed, upon which robust serial, parallel and distributed backends were built.
 	
